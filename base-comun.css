@@ -1,0 +1,70 @@
+:root {
+    --azul: #1a498b;
+    --rojo: #d62828;
+    --fondo-pagina: #e9ecef;
+    --fuente-datos: 'Courier New', Courier, monospace;
+    --ancho-hoja: 790px;
+}
+
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    background-color: var(--fondo-pagina);
+    display: flex; flex-direction: column; align-items: center;
+    padding: 20px; margin: 0;
+}
+
+#numero-nota { cursor: text; outline: none; min-width: 1ch; }
+#numero-nota:focus { background-color: #fff3f3; }
+
+.text-red  { color: var(--rojo); }
+.text-blue { color: var(--azul); }
+
+.hoja {
+    background: white;
+    width: 100%;
+    max-width: var(--ancho-hoja);
+    padding: 40px;
+    box-sizing: border-box;
+    color: var(--azul);
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    container-type: inline-size; /* permite reglas según el ancho de la hoja */
+}
+
+.controles { width: 100%; max-width: var(--ancho-hoja); display: flex; justify-content: flex-end; gap: 10px; margin-bottom: 15px; }
+.input-limpio, .dato-editable, .col-vtotal { font-family: var(--fuente-datos); font-weight: bold; color: #333; }
+
+/* ===== Botones (mismas clases en ambas notas) ===== */
+.btn-accion {
+    color: #fff; border: none; padding: 10px 15px; border-radius: 5px;
+    cursor: pointer; font-weight: bold; font-size: 14px;
+    text-decoration: none; box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+.btn-gris  { background: #6c757d; margin-right: auto; }
+.btn-azul  { background: #0d6efd; }
+.btn-verde { background: #198754; }
+.btn-verde:hover { background: #157347; }
+
+/* ===== Campos del cliente ===== */
+.linea-dato { display: flex; align-items: flex-end; margin-bottom: 8px; }
+.linea-dato label { white-space: nowrap; margin-right: 5px; }
+.dato-editable {
+    flex: 1; min-width: 0;
+    border-bottom: 1px dotted var(--azul);
+    font-family: var(--fuente-datos); color: #333;
+    min-height: 18px; padding-left: 5px; outline: none; cursor: text;
+}
+.dato-editable:focus { background: #f0f8ff; }
+
+/* Dos campos en la misma fila (reemplaza los style="flex/width" inline) */
+.fila-doble { display: flex; gap: 20px; }
+.fila-doble > .linea-dato        { flex: 1; }
+.fila-doble > .linea-dato.flex-2 { flex: 2; }
+.fila-doble > .linea-dato.flex-3 { flex: 3; }
+
+@media (max-width: 820px) {
+    .controles { flex-wrap: wrap; }
+    .btn-gris { width: 100%; margin-right: 0; text-align: center; box-sizing: border-box; }
+}
+@container (max-width: 600px) {
+    .fila-doble { flex-direction: column; gap: 0; }
+}

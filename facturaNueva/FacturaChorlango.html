@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nota de Venta - Chorlango</title>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+    <link rel="stylesheet" href="../base-comun.css">
+    <link rel="stylesheet" href="chorlangoEstilos.css">
+</head>
+<body>
+
+<div class="controles" data-html2canvas-ignore="true">
+    <a href="../index.html" class="btn-accion btn-gris">← Volver al Menú</a>
+    <button id="btn-agregar-fila" class="btn-accion btn-azul">+ Agregar Fila</button>
+    <button id="btn-descargar" class="btn-accion btn-verde">Generar PDF</button>
+</div>
+
+<div class="hoja" id="comprobante-pdf">
+
+    <div class="header text-blue">
+        <div class="header-left text-center">
+            <h1 class="titulo-principal">CHORLANGO DÍAZ CÉSAR HERNÁN</h1>
+            <p>Dirección: Las Nueces N52-455 y Las Camelias</p>
+            <p>Cel.: 0995 784 330 / 0991 315 693</p>
+            <p>E-mail: cesar_chd@outlook.com</p>
+            <p>Quito - Ecuador</p>
+            <p class="fw-bold mt-1">"CONTRIBUYENTE NEGOCIO POPULAR - RÉGIMEN RIMPE"</p>
+        </div>
+
+        <div class="header-right text-center">
+            <div class="bloque-borde">
+                <div class="ruc fw-bold">R.U.C.: 1707086110001</div>
+                <div class="nota-venta fw-bold">NOTA DE VENTA 001-001</div>
+                <div class="numero text-red fw-bold" id="numero-nota" contenteditable="true" inputmode="numeric">000001894</div>div>
+            </div>
+            <div class="bloque-borde mt-1 fw-bold fs-small">
+                AUT. S.R.I. 1133497168
+            </div>
+        </div>
+    </div>
+
+    <div class="cliente-section text-blue">
+        <div class="fila-doble">
+            <div class="linea-dato flex-2">
+                <label>Fecha:</label>
+                <div class="dato-editable" contenteditable="true"></div>
+            </div>
+            <div class="linea-dato flex-3">
+                <label>C.I./R.U.C.:</label>
+                <div class="dato-editable" contenteditable="true" inputmode="numeric"></div>
+            </div>
+        </div>
+        <div class="linea-dato">
+            <label>Señor(es):</label>
+            <div class="dato-editable" contenteditable="true"></div>
+        </div>
+        <div class="fila-doble">
+            <div class="linea-dato flex-3">
+                <label>Dirección:</label>
+                <div class="dato-editable" contenteditable="true"></div>
+            </div>
+            <div class="linea-dato flex-2">
+                <label>Teléfono:</label>
+                <div class="dato-editable" contenteditable="true" inputmode="tel"></div>
+            </div>
+        </div>
+    </div>
+
+    <table class="tabla-productos text-blue" id="tabla-factura">
+        <thead>
+            <tr>
+                <th class="col-cant">CANTIDAD</th>
+                <th class="col-desc">DESCRIPCIÓN</th>
+                <th class="col-vunit">V. UNITARIO</th>
+                <th class="col-vtotal">VALOR TOTAL</th>
+            </tr>
+        </thead>
+        <tbody id="cuerpo-tabla"></tbody>
+    </table>
+
+    <div class="footer-totales text-blue">
+        <div class="caja-observaciones">
+            <div class="linea-dato">
+                <label class="fw-bold">OBSERVACIONES:</label>
+                <div class="dato-editable" contenteditable="true"></div>
+            </div>
+            <div class="formas-pago">
+                <strong>FORMA DE PAGO:</strong>
+                Efectivo <span class="box-pago" contenteditable="true"></span>
+                Dinero Electrónico <span class="box-pago" contenteditable="true"></span>
+                Otros <span class="box-pago" contenteditable="true"></span>
+            </div>
+        </div>
+
+        <div class="total-caja">
+            <div class="celda-etiqueta">TOTAL $</div>
+            <div class="celda-valor">
+                <span id="gran-total">0.00</span>
+            </div>
+        </div>
+    </div>
+
+    <section class="contenedor-firmas text-blue">
+        <div class="firma-box">FIRMA AUTORIZADA</div>
+        <div class="firma-box">FIRMA CLIENTE</div>
+    </section>
+
+    <div class="imprenta-info text-blue">
+        "MEGA SOLUCIONES TRIBUTARIAS" • MOGOLLON CEPEDA MARIO ENRIQUE • TELF.: 2 544 249 • R.U.C.: 1714954558001 • AUT. 3328<br>
+        FECHA DE AUT. 16/JULIO/2026 • NUMERADO DEL 01801 AL 02000 • ORIGINAL: ADQUIRENTE / COPIA: EMISOR
+    </div>
+
+</div>
+
+<script src="Chorlango.js"></script>
+</body>
+</html>

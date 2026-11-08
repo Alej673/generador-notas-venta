@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nota de Venta - Brachiguer</title>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+    <link rel="stylesheet" href="base-comun.css">
+    <link rel="stylesheet" href="Estilos.css">
+</head>
+<body>
+
+<div class="controles" data-html2canvas-ignore="true">
+    <a href="index.html" class="btn-accion btn-gris">← Volver al Menú</a>
+    <button id="btn-agregar-fila" class="btn-accion btn-azul">+ Agregar Fila</button>
+    <button id="btn-descargar" class="btn-accion btn-verde">Generar PDF</button>
+</div>
+
+<div class="hoja" id="comprobante-pdf">
+
+    <div class="header text-blue">
+        <div class="header-left text-center">
+            <h1 class="text-red titulo-principal">SERVICIOS BRACHIGUER</h1>
+            <p>BRACHO GUERRA EDGAR PATRICIO</p>
+            <p style="font-size: 11px;">VENTA AL POR MENOR DE ARTÍCULOS DE FERRETERÍA</p>
+            <p style="font-weight: normal;">Matriz: Av. América S/N y Av. Universitaria
+               Telf.: 354037 / Cel.: 0998 567 132<br>
+               Email: brachopatric01@hotmail.com</p>
+        </div>
+
+        <div class="header-right text-center">
+            <div class="ruc fw-bold">R.U.C 1707862106001</div>
+            <div class="nota-venta fw-bold">NOTA DE VENTA S002-001</div>
+            <div class="numero text-red fw-bold">No. <span id="numero-nota" contenteditable="true" inputmode="numeric">0000590</span></div>
+            <div class="fs-small fw-bold mt-1">AUT. SRi 1133150857</div>
+            <div class="fs-micro">FECHA AUT.: 23/NOVIEMBRE/2025</div>
+
+            <table class="tabla-fecha">
+                <tr>
+                    <th rowspan="2" class="celda-fecha">
+                        <div class="texto-rotado">FECHA</div>
+                    </th>
+                    <th>DIA</th>
+                    <th>MES</th>
+                    <th>AÑO</th>
+                </tr>
+                <tr>
+                    <td contenteditable="true" inputmode="numeric"></td>
+                    <td contenteditable="true" inputmode="numeric"></td>
+                    <td contenteditable="true" inputmode="numeric"></td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <div class="cliente-section text-blue">
+        <div class="linea-dato">
+            <label>Cliente:</label>
+            <div class="dato-editable" contenteditable="true"></div>
+        </div>
+        <div class="fila-doble">
+            <div class="linea-dato flex-2">
+                <label>RUC/C.I.:</label>
+                <div class="dato-editable" contenteditable="true" inputmode="numeric"></div>
+            </div>
+            <div class="linea-dato">
+                <label>Telf.:</label>
+                <div class="dato-editable" contenteditable="true" inputmode="tel"></div>
+            </div>
+        </div>
+        <div class="linea-dato">
+            <label>Dirección:</label>
+            <div class="dato-editable" contenteditable="true"></div>
+        </div>
+    </div>
+
+    <table class="tabla-productos text-blue" id="tabla-factura">
+        <thead>
+            <tr>
+                <th class="col-cant">CANT.</th>
+                <th class="col-desc">DESCRIPCIÓN</th>
+                <th class="col-vunit">V/ UNIT.</th>
+                <th class="col-vunit">V/ TOTAL</th>
+            </tr>
+        </thead>
+        <tbody id="cuerpo-tabla"></tbody>
+    </table>
+
+    <div class="footer-totales text-blue">
+        <div class="formas-pago">
+            <strong>FORMA DE PAGO: &nbsp; </strong>
+            Efectivo <span class="box-pago" contenteditable="true"></span> &nbsp;
+            Cheque <span class="box-pago" contenteditable="true"></span> &nbsp;
+            Transf. <span class="box-pago" contenteditable="true"></span> &nbsp;
+            Otros <span class="box-pago" contenteditable="true"></span>
+        </div>
+
+        <div class="total-caja">
+            <div class="celda-etiqueta">TOTAL $</div>
+            <div class="celda-valor">
+                <span id="gran-total" style="font-family: 'Courier New', Courier, monospace; color: #333;"></span>
+            </div>
+        </div>
+    </div>
+
+    <section class="contenedor-inferior">
+        <div class="firma-box">
+            <div style="height: 20px;"></div>
+            FIRMA AUTORIZADA
+        </div>
+        <div class="firma-box">
+            <div style="height: 20px;"></div>
+            FIRMA CLIENTE
+        </div>
+        <div class="regimen-rimpe text-blue">
+            Contribuyente Negocio Popular<br>Régimen Rimpe
+        </div>
+    </section>
+
+    <div class="imprenta-info text-blue">
+        QUISHPE JACHO MARCO ANIBAL * IMP. DON MARCO * AUT. 1758 * RUC. 1702749902001 / IMPRENTA: 0998 951 750<br>
+        DEL 0000501 AL 0000600 &nbsp;&nbsp;&nbsp; ORIGINAL ADQUIRENTE / COPIA EMISOR CADUCA: 23/NOVIEMBRE/2026
+    </div>
+
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>

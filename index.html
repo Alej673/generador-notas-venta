@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestor de Notas de Venta</title>
+    <style>
+        :root {
+            --bg-color: #f4f7f6;
+            --text-main: #2c3e50;
+            --text-muted: #6c757d;
+            --primary: #0d6efd;
+            --primary-hover: #0b5ed7;
+            --card-bg: #ffffff;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .launcher-container {
+            max-width: 800px;
+            width: 100%;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 10px;
+            color: var(--text-main);
+            letter-spacing: -0.5px;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            color: var(--text-muted);
+        }
+
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 35px 25px;
+            text-align: center;
+            text-decoration: none;
+            color: inherit;
+            border: 2px solid transparent;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Efecto de borde superior al hacer hover */
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: var(--primary);
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+            transform-origin: left;
+        }
+
+        .card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 30px rgba(13, 110, 253, 0.12);
+            border-color: rgba(13, 110, 253, 0.2);
+        }
+
+        .card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .card-icon {
+            font-size: 48px;
+            margin-bottom: 20px;
+            display: inline-block;
+            padding: 15px;
+            background: rgba(13, 110, 253, 0.05);
+            border-radius: 50%;
+            color: var(--primary);
+        }
+
+        .card h2 {
+            font-size: 1.4rem;
+            margin-bottom: 12px;
+            font-weight: 700;
+        }
+
+        .card p {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            line-height: 1.5;
+            margin-bottom: 20px;
+        }
+
+        .btn-ingresar {
+            display: inline-block;
+            background-color: var(--primary);
+            color: white;
+            padding: 10px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: background-color 0.2s;
+        }
+
+        .card:hover .btn-ingresar {
+            background-color: var(--primary-hover);
+        }
+
+        /* Badge para diferenciar versiones */
+        .badge {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: #e9ecef;
+            color: #495057;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="launcher-container">
+        <div class="header">
+            <h1>Sistema de Facturación</h1>
+            <p>Selecciona el perfil tributario para generar el comprobante PDF</p>
+        </div>
+
+        <div class="cards-grid">
+            
+            <!-- TARJETA 1: Servicios Brachiguer -->
+            <a href="FacturaVF.html" class="card">
+                <span class="badge">V1 - Clásica</span>
+                <div class="card-icon">📄</div>
+                <h2>Servicios Brachiguer</h2>
+                <p>Formato estándar vertical en A4. Ideal para venta al por menor de artículos de ferretería.</p>
+                <span class="btn-ingresar">Abrir Generador</span>
+            </a>
+
+            <!-- TARJETA 2: Chorlango Díaz -->
+            <a href="facturaNueva/FacturaChorlango.html" class="card">
+                <span class="badge">V2 - RIMPE</span>
+                <div class="card-icon">🧾</div>
+                <h2>Chorlango Díaz</h2>
+                <p>Formato actualizado a tamaño A5 apaisado. Configurado para Negocio Popular - Régimen RIMPE.</p>
+                <span class="btn-ingresar">Abrir Generador</span>
+            </a>
+
+        </div>
+    </div>
+
+</body>
+</html>

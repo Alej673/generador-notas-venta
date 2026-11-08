@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Sistema de Nota de Venta</title>
+<!-- Librería para convertir HTML a PDF de forma nativa sin dividir páginas -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<style>
+    /* Estilos base */
+    body {
+        font-family: Arial, Helvetica, sans-serif;
+        color: #1b1c94;
+        background-color: #f0f2f5;
+        margin: 0;
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .controls {
+        margin-bottom: 20px;
+        text-align: center;
+        background: white;
+        padding: 15px 30px;
+        border-radius: 10px;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+    
+    .btn {
+        background-color: #1b1c94;
+        color: white;
+        border: none;
+        padding: 12px 24px;
+        font-size: 16px;
+        border-radius: 8px;
+        cursor: pointer;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        transition: background 0.3s;
+        margin: 5px;
+        font-weight: bold;
+    }
+    .btn:hover { background-color: #12136b; }
+    .btn-pdf { background-color: #e81717; }
+    .btn-pdf:hover { background-color: #b81212; }
+
+    /* Contenedor de la nota imitando la hoja A4 */
+    .hoja-a4 {
+        width: 210mm;
+        /* Quitamos el min-height excesivo que causaba la 2da página y usamos uno ajustado */
+        height: 275mm; 
+        background: white;
+        padding: 15mm 20mm;
+        box-shadow: 0 0 15px rgba(0,0,0,0.2);
+        box-sizing: border-box;
+        position: relative;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; }
+
+    .text-center { text-align: center; }
+    .text-right { text-align: right; }
+    .bold { font-weight: bold; }
+    .red-text { color: #e81717; }
+
+    /* Inputs invisibles para el llenado */
+    input {
+        border: none;
+        background: transparent;
+        font-family: inherit;
+        font-size: 13px;
+        color: #1b1c94;
+        width: 100%;
+        outline: none;
+    }
+    input[type="number"]::-webkit-inner-spin-button, 
+    input[type="number"]::-webkit-outer-spin-button { 
+        -webkit-appearance: none; 
+        margin: 0; 
+    }
+
+    /* Header */
+    .header-title { font-size: 36px; font-weight: bold; margin-bottom: 2px; letter-spacing: 1px; }
+    .header-info { font-size: 13px; line-height: 1.3; }
+    .header-divider { border-top: 1.5px solid #1b1c94; margin: 8px 0; }
+    .contribuyente { font-size: 11px; margin-bottom: 15px; font-weight: bold;}
+
+    /* Top Info Section */
+    .top-info { display: table; width: 100%; margin-bottom: 10px; }
+    .top-left { display: table-cell; width: 45%; vertical-align: top; }
+    .top-right { display: table-cell; width: 55%; text-align: right; vertical-align: top; }
+
+    /* RUC Box */
+    .ruc-container { display: inline-block; border: 1.5px solid #1b1c94; border-radius: 6px; overflow: hidden; font-size: 16px; font-weight: bold; }
+    .ruc-inner { display: table; border-collapse: collapse; }
+    .ruc-label { display: table-cell; background-color: #1b1c94; color: white; padding: 4px 10px; vertical-align: middle; font-size: 13px; }
+    .ruc-value { display: table-cell; padding: 4px 10px; vertical-align: middle; background-color: white; }
+
+    /* Dates Box */
+    .dates-container { margin-top: 8px; }
+    .date-box { display: inline-block; border: 1px solid #1b1c94; border-radius: 6px; width: 52px; height: 32px; margin-right: 5px; overflow: hidden; vertical-align: middle; }
+    .date-inner { display: table; width: 100%; height: 100%; border-collapse: collapse; }
+    .date-label { display: table-cell; background-color: #1b1c94; color: white; font-size: 9px; width: 18px; text-align: center; vertical-align: middle; line-height: 1; }
+    .date-value { display: table-cell; background-color: white; padding: 0 4px;}
+    .date-value input { text-align: center; font-weight: bold; font-size: 14px;}
+
+    /* Top Right Info */
+    .nota-venta-title { font-size: 26px; font-weight: bold; letter-spacing: 0.5px; }
+    .sri-text { font-size: 13px; font-weight: bold; margin-bottom: 5px; }
+    .receipt-number { font-size: 22px; font-weight: bold; margin-top: 5px; }
+
+    /* Customer Fields */
+    .field-box { border: 1px solid #1b1c94; border-radius: 6px; padding: 6px 10px; margin-bottom: 6px; font-size: 12px; min-height: 28px; display: flex; align-items: center;}
+    .field-label { white-space: nowrap; margin-right: 8px; font-weight: bold; }
+    .fields-row { display: table; width: 100%; border-spacing: 0; margin-bottom: 6px; }
+    .field-col-left { display: table-cell; width: 70%; padding-right: 6px; }
+    .field-col-right { display: table-cell; width: 30%; }
+
+    /* Main Container */
+    .main-container { border: 1.5px solid #1b1c94; border-radius: 10px; margin-top: 10px; overflow: hidden; }
+
+    /* Table */
+    .items-table { width: 100%; border-collapse: collapse; }
+    .items-table th, .items-table td { border-bottom: 1px solid #1b1c94; border-right: 1px solid #1b1c94; padding: 5px 7px; font-size: 12px; height: 26px; }
+    .items-table th { font-weight: bold; text-align: center; padding: 8px; background-color: rgba(27, 28, 148, 0.05); }
+    .items-table th:last-child, .items-table td:last-child { border-right: none; }
+    
+    .items-table td input.cant { text-align: center; }
+    .items-table td input.vunit, .items-table td input.vtotal { text-align: right; }
+    
+    .items-table tr:last-child td:nth-child(1), .items-table tr:last-child td:nth-child(2) { border-bottom: none; border-right: none; }
+    .items-table tr:last-child td:nth-child(3) { border-left: 1px solid #1b1c94; padding: 8px; border-bottom: none;}
+    .items-table tr:last-child td:nth-child(4) { border-bottom: none; }
+    .total-display { text-align: right; font-weight: bold; font-size: 15px; padding-right: 5px;}
+
+    /* Signatures Area */
+    .footer-area { padding: 40px 20px 10px 20px; background-color: white; }
+    .signatures { display: table; width: 100%; margin-bottom: 15px; }
+    .sig-cell { display: table-cell; width: 50%; text-align: center; vertical-align: bottom; }
+    .sig-line { border-top: 1px solid #1b1c94; width: 60%; margin: 0 auto; padding-top: 5px; font-size: 11px; font-weight: bold;}
+    .footer-legal { text-align: center; font-size: 10px; line-height: 1.4; margin-top: 10px; color: #333;}
+
+    /* Signatures Area - Actualizado con color azul */
+    .footer-area { padding: 40px 20px 10px 20px; background-color: white; }
+    .signatures { display: table; width: 100%; margin-bottom: 15px; }
+    .sig-cell { display: table-cell; width: 50%; text-align: center; vertical-align: bottom; }
+    
+    /* Se agregó color: #1b1c94 aquí */
+    .sig-line { border-top: 1px solid #1b1c94; width: 60%; margin: 0 auto; padding-top: 5px; font-size: 11px; font-weight: bold; color: #1b1c94;}
+    
+    /* Se agregó color: #1b1c94 aquí */
+    .footer-legal { text-align: center; font-size: 10px; line-height: 1.4; margin-top: 10px; color: #1b1c94;}
+    /* Print Styles: Corrección principal para evitar que se divida en 2 páginas */
+    @media print {
+        @page {
+            size: A4 portrait;
+            margin: 0.5cm; /* Margen muy pequeño para asegurar que entre en una hoja */
+        }
+        body { 
+            background: white; 
+            padding: 0; 
+            margin: 0;
+            display: block; 
+        }
+        .controls { display: none !important; }
+        .hoja-a4 { 
+            box-shadow: none; 
+            width: 100%; 
+            height: auto !important; 
+            min-height: 0; 
+            padding: 0; 
+            margin: 0;
+            page-break-after: avoid;
+            page-break-inside: avoid;
+        }
+        input::placeholder { color: transparent; }
+    }
+</style>
+</head>
+<body>
+
+    <div class="controls">
+        <h2 style="margin-top:0;">Mini Sistema - Nota de Venta</h2>
+        <p>Llena los datos y usa el botón <b>Descargar PDF</b> para generar un archivo perfecto en una sola hoja.</p>
+        <button class="btn" onclick="window.print()">🖨️ Imprimir Normal</button>
+        <button class="btn btn-pdf" onclick="generarPDF()">📄 Descargar PDF (Recomendado)</button>
+    </div>
+
+    <!-- Se le asigna un ID para que html2pdf lo reconozca fácilmente -->
+    <div class="hoja-a4" id="factura">
+        <div class="text-center">
+            <div class="header-title">GLASS ALUM 2</div>
+            <div class="header-info">Sanmartin Aguirre Cesar Remigio</div>
+            <div class="header-info"><span class="bold">Dirección:</span> El Canelo Oe9-66 y Pasaje Oe9b * Telf: 0963215839</div>
+            <div class="header-info">cesarss77@hotmail.es * Quito-Ecuador</div>
+            <div class="header-divider"></div>
+            <div class="contribuyente">"CONTRIBUYENTE NEGOCIO POPULAR - REGIMEN RIMPE"</div>
+        </div>
+
+        <div class="top-info">
+            <div class="top-left">
+                <div class="ruc-container">
+                    <div class="ruc-inner">
+                        <div class="ruc-label">R.U.C.:</div>
+                        <div class="ruc-value">1720291706001</div>
+                    </div>
+                </div>
+                <div class="dates-container">
+                    <div class="date-box">
+                        <div class="date-inner">
+                            <div class="date-label">D<br>I<br>A</div>
+                            <div class="date-value"><input type="text" maxlength="2" id="dia" value="27"></div>
+                        </div>
+                    </div>
+                    <div class="date-box">
+                        <div class="date-inner">
+                            <div class="date-label">M<br>E<br>S</div>
+                            <div class="date-value"><input type="text" maxlength="2" id="mes" value="08"></div>
+                        </div>
+                    </div>
+                    <div class="date-box">
+                        <div class="date-inner">
+                            <div class="date-label">A<br>Ñ<br>O</div>
+                            <div class="date-value"><input type="text" maxlength="4" id="anio" value="2025"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="top-right">
+                <table style="width: 100%; margin-bottom: 2px;">
+                    <tr>
+                        <td style="width: 15%; border-bottom: 2.5px solid #1b1c94; position: relative; top: -12px;"></td>
+                        <td style="text-align: right;"><span class="nota-venta-title">NOTA DE VENTA</span></td>
+                    </tr>
+                </table>
+                <div class="sri-text">AUT. S.R.I: 1132931668</div>
+                <div class="receipt-number">
+                    <span>001-001-00</span> &nbsp; <input type="text" class="red-text" style="width: 110px; font-size: 22px; font-weight: bold; background:transparent;" value="0000024">
+                </div>
+            </div>
+        </div>
+
+        <div class="field-box">
+            <span class="field-label">CLIENTE:</span>
+            <input type="text" style="flex-grow: 1;" value="FUNDACION BEATRIZ VELALCAZAR">
+        </div>
+        <div class="field-box">
+            <span class="field-label">DIRECC.:</span>
+            <input type="text" style="flex-grow: 1;" value="AV.6 DE DICIEMBRE Y EL BATAN">
+        </div>
+        <div class="fields-row">
+            <div class="field-col-left">
+                <div class="field-box" style="margin-bottom:0;">
+                    <span class="field-label">RUC/C.I:</span>
+                    <input type="text" style="flex-grow: 1;" value="1791709179001">
+                </div>
+            </div>
+            <div class="field-col-right">
+                <div class="field-box" style="margin-bottom:0;">
+                    <span class="field-label">TELF.:</span>
+                    <input type="text" style="flex-grow: 1;">
+                </div>
+            </div>
+        </div>
+
+        <div class="main-container">
+            <table class="items-table" id="invoice-table">
+                <thead>
+                    <tr>
+                        <th style="width: 12%;">CANT:</th>
+                        <th style="width: 53%;">DESCRIPCION</th>
+                        <th style="width: 15%;">V.UNIT.</th>
+                        <th style="width: 20%;">V.TOTAL.</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Fila 1 prellenada -->
+                    <tr class="item-row">
+                        <td><input type="number" class="cant" min="0" step="1" value="1"></td>
+                        <td><input type="text" class="desc" value="ESPEJO 123*158 ESPECIAL"></td>
+                        <td><input type="number" class="vunit" min="0" step="0.01" value="110.00"></td>
+                        <td><input type="text" class="vtotal" readonly tabindex="-1" value="110.00"></td>
+                    </tr>
+                    <!-- Resto de filas dinámicas -->
+                    <script>
+                        for(let i=0; i<11; i++){
+                            document.write(`
+                            <tr class="item-row">
+                                <td><input type="number" class="cant" min="0" step="1"></td>
+                                <td><input type="text" class="desc"></td>
+                                <td><input type="number" class="vunit" min="0" step="0.01"></td>
+                                <td><input type="text" class="vtotal" readonly tabindex="-1"></td>
+                            </tr>
+                            `);
+                        }
+                    </script>
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <td class="text-center bold">TOTAL $</td>
+                        <td class="total-display" id="grand-total">110.00</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="footer-area">
+                <div class="signatures">
+                    <div class="sig-cell">
+                        <div class="sig-line">F.AUTORIZADA</div>
+                    </div>
+                    <div class="sig-cell">
+                        <div class="sig-line">F.CLIENTE</div>
+                    </div>
+                </div>
+                <div class="footer-legal">
+                    VALAREZO LOPEZ JAIME PATRICIO * RUC.: 1713122198001 * AUT.: 13558 Telf.: 3 215 495 / 0987 621 593<br>
+                    Numerado del 0000021 al 0000045 IMPR. 25/06/2025 * VALIDO PARA SU EMISION HASTA 25/06/2026<br>
+                    ORIGINAL ADQUIRENTE * COPIA: EMISOR
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Lógica para auto-calcular los totales
+        const rows = document.querySelectorAll('.item-row');
+        const grandTotalElement = document.getElementById('grand-total');
+
+        function calculateTotals() {
+            let grandTotal = 0;
+
+            rows.forEach(row => {
+                const cantInput = row.querySelector('.cant');
+                const vunitInput = row.querySelector('.vunit');
+                const vtotalInput = row.querySelector('.vtotal');
+
+                const cant = parseFloat(cantInput.value);
+                const vunit = parseFloat(vunitInput.value);
+
+                if (!isNaN(cant) && !isNaN(vunit)) {
+                    const rowTotal = cant * vunit;
+                    vtotalInput.value = rowTotal.toFixed(2);
+                    vtotalInput.setAttribute('value', rowTotal.toFixed(2)); // Asegura que html2pdf lo lea
+                    grandTotal += rowTotal;
+                } else {
+                    vtotalInput.value = '';
+                    vtotalInput.setAttribute('value', '');
+                }
+                
+                // Actualizar atributos value para que html2pdf capture los cambios
+                if(cantInput.value) cantInput.setAttribute('value', cantInput.value);
+                if(vunitInput.value) vunitInput.setAttribute('value', vunitInput.value);
+            });
+
+            if (grandTotal > 0) {
+                grandTotalElement.textContent = grandTotal.toFixed(2);
+            } else {
+                grandTotalElement.textContent = '';
+            }
+        }
+
+        // Agregar Event Listeners a los inputs
+        rows.forEach(row => {
+            const cantInput = row.querySelector('.cant');
+            const vunitInput = row.querySelector('.vunit');
+            const descInput = row.querySelector('.desc');
+
+            cantInput.addEventListener('input', calculateTotals);
+            vunitInput.addEventListener('input', calculateTotals);
+            
+            // Asegurar que los textos descriptivos también se guarden en el atributo value
+            descInput.addEventListener('input', function() {
+                this.setAttribute('value', this.value);
+            });
+        });
+
+        // Asegurar que los datos del cliente también se reflejen al exportar PDF
+        const textInputs = document.querySelectorAll('input[type="text"]:not(.desc, .vtotal)');
+        textInputs.forEach(input => {
+            input.addEventListener('input', function() {
+                this.setAttribute('value', this.value);
+            });
+        });
+
+        // Configuración de html2pdf
+        function generarPDF() {
+            const elemento = document.getElementById('factura');
+            
+            // Opciones de configuración para forzar 1 sola página A4 perfecta
+            const opciones = {
+                margin:       0,
+                filename:     'Nota_de_Venta_0000024.pdf',
+                image:        { type: 'jpeg', quality: 0.98 },
+                html2canvas:  { scale: 2, useCORS: true },
+                jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            };
+
+            // Generar y descargar el PDF
+            html2pdf().set(opciones).from(elemento).save();
+        }
+    </script>
+</body>
+</html>
